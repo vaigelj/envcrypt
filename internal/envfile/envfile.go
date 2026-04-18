@@ -76,3 +76,13 @@ func (e *EnvFile) ToMap() map[string]string {
 	}
 	return m
 }
+
+// Get returns the value for the given key and whether it was found.
+func (e *EnvFile) Get(key string) (string, bool) {
+	for _, entry := range e.Entries {
+		if entry.Key == key {
+			return entry.Value, true
+		}
+	}
+	return "", false
+}
