@@ -58,7 +58,7 @@ func Decrypt(key, ciphertext []byte) ([]byte, error) {
 	nonce, ciphertext := ciphertext[:nonceSize], ciphertext[nonceSize:]
 	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("decryption failed: authentication tag mismatch or corrupted data")
 	}
 
 	return plaintext, nil
