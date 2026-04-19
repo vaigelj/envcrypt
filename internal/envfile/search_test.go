@@ -74,3 +74,17 @@ func TestSearchInvalidRegex(t *testing.T) {
 		t.Fatal("expected error for invalid regex")
 	}
 }
+
+func TestSearchBothKeyAndValuePattern(t *testing.T) {
+	// Only entries matching both key and value patterns should be returned.
+	res, err := Search(searchEntries, "test.env", SearchOptions{
+		KeyPattern:   "APP_",
+		ValuePattern: "localhost",
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(res) != 1 || res[0].Key != "APP_HOST" {
+		t.Fatalf("expected 1 result with key APP_HOST, got %v", res)
+	}
+}
