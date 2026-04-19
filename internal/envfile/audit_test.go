@@ -81,6 +81,21 @@ func TestAuditEventString(t *testing.T) {
 	}
 }
 
+func TestRecordSetsTimestamp(t *testing.T) {
+	var log AuditLog
+	before := time.Now()
+	log.Record("encrypt", ".env", "alice", "", 1)
+	after := time.Now()
+
+	e := log.Last()
+	if e == nil {
+		t.Fatal("expected event, got nil")
+	}
+	if e.Timestamp.Before(before) || e.Timestamp.After(after) {
+		t.Errorf("timestamp %v not between %v and %v", e.Timestamp, before, after)
+	}
+}
+
 func containsStr(s, sub string) bool {
 	return len(s) >= len(sub) && (s == sub || len(s) > 0 && stringContains(s, sub))
 }
