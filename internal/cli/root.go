@@ -39,6 +39,9 @@ func Execute() {
 	}
 }
 
+// keystorePath returns the path to the keystore file. It checks the
+// ENVCRYPT_KEYSTORE environment variable first, falling back to the default
+// path ".envcrypt_keys" in the current working directory.
 func keystorePath() string {
 	if p := os.Getenv("ENVCRYPT_KEYSTORE"); p != "" {
 		return p
