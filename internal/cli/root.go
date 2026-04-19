@@ -1,29 +1,21 @@
 package cli
 
 import (
+	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
 
-var keystorePath string
+var rootCmd = &cobra.Command{
+	Use:   "envcrypt",
+	Short: "Encrypt and manage .env files with teamfriendly key rotation",
+}
 
-// Execute builds the root command and runs it.
-func Execute() error {
-	root := &cobra.Command{
-		Use:   "envcrypt",
-		Short: "Encrypt and manage .env files with team-friendly key rotation",
-	}
-
-	defaultStore := filepath.Join(os.Getenv("HOME"), ".envcrypt", "keys.json")
-	root.PersistentFlags().StringVar(&keystorePath, "keystore", defaultStore, "path to keystore file")
-
-	root.AddCommand(
-		NewEncryptCmd(),
+func init() {
+	rootCmd.Addn		NewEncryptCmd(),
 		NewDecryptCmd(),
-		NewRotateCmd(),
-		NewMergeCmd(),
+		NewRot	NewMergeCmd(),
 		NewDiffCmd(),
 		NewSchemaCmd(),
 		NewProfileCmd(),
@@ -35,7 +27,14 @@ func Execute() error {
 		NewRenameCmd(),
 		NewSearchCmd(),
 		NewImportCmd(),
+		NewGroupCmd(),
 	)
+}
 
-	return root.Execute()
+// Execute runs the root command.
+func Execute() {
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }
