@@ -31,7 +31,7 @@ func Import(src, format string) (map[string]string, error) {
 	case ImportShell:
 		return importShell(string(data))
 	default:
-		return nil, fmt.Errorf("import: unknown format %q", format)
+		return nil, fmt.Errorf("import: unknown format %q (supported: dotenv, json, shell)", format)
 	}
 }
 
@@ -46,7 +46,12 @@ func importJSON(data []byte) (map[string]string, error) {
 	}
 	out := make(map[string]string, len(raw))
 	for k, v := range raw {
-		out[k] = fmt.Sprintf("%v", v)
+		switch val := v.(type) {
+		case string:
+			out[k] = val
+		default:
+			out[k] = fmt.Sprintf("%v", v)
+		}
 	}
 	return out, nil
 }
