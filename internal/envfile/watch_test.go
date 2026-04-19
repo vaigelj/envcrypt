@@ -71,3 +71,25 @@ func TestWatchMissingFile(t *testing.T) {
 		t.Error("expected error for missing file")
 	}
 }
+
+func TestWatchStopsOnDone(t *testing.T) {
+	path := writeTempEnvForWatch(t, "FOO=bar\n")
+	done := make(chan struct{})
+
+	ch, err := Watch(path, 20*time.Millisecond, done)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	close(done)
+
+	// After done is closed the channel should be closed with no spurious events.
+	select {
+	case _, ok := <-ch:
+		if ok {
+			t.Error("expected channel to be closed after done signal")
+		}
+	case <-time.After(200 * time.Millisecond):
+		t.Fatal("timed out waiting for channel to close after done")
+	}
+}
