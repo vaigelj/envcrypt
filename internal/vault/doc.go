@@ -12,4 +12,11 @@
 // exposing plaintext to disk:
 //
 //	rotated, err := v.RotateKey(encrypted, "old-key", "new-key")
+//
+// # Error Handling
+//
+// All operations return descriptive errors that include the operation name and
+// relevant context (e.g., key name or file path). Callers should check for
+// [ErrKeyNotFound] when a named key does not exist in the keystore, and
+// [ErrInvalidCiphertext] when decryption fails due to corrupt or tampered data.
 package vault
